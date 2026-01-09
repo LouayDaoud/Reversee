@@ -36,4 +36,3 @@ ADMIN_EMAILS=
 # Par défaut: http://localhost:11434
 # Changez cette valeur si Ollama tourne sur un autre port ou une autre machine
 LOCAL_AI_ENDPOINT=http://localhost:11434
-
