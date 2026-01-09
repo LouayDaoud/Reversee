@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles for the AI Chat component */
+.chat-message-ai {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.chat-message-user {
+  animation: slideIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Markdown styling for chat messages */
+.chat-message-content p {
+  margin-bottom: 0.5rem;
+}
+
+.chat-message-content ul,
+.chat-message-content ol {
+  margin-left: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.chat-message-content strong {
+  font-weight: 600;
+}
+
+.chat-message-content a {
+  color: #6366f1;
+  text-decoration: underline;
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] .chat-message-content a {
+  color: #818cf8;
+}
