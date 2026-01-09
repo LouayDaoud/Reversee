@@ -1,0 +1,39 @@
+# ============================================
+# Configuration Reversee Backend
+# ============================================
+# Copiez ce contenu dans un fichier nommé .env dans le dossier backend
+# et remplissez les valeurs
+
+# ============================================
+# REQUIRED - Variables obligatoires
+# ============================================
+
+# Clé API OpenAI (OPTIONNEL - OpenAI est désactivé par défaut)
+# Obtenez votre clé sur : https://platform.openai.com/api-keys
+# Note: Le système utilise maintenant le modèle ML local (Ollama) par défaut
+# OPENAI_API_KEY=
+
+# URI de connexion MongoDB
+# Format: mongodb://[username:password@]host[:port][/database]
+MONGODB_URI=mongodb://localhost:27017/reversee
+
+# Secret JWT pour l'authentification
+# Générez une clé sécurisée avec: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+JWT_SECRET=
+
+# Port du serveur backend
+PORT=5000
+
+# ============================================
+# OPTIONAL - Variables optionnelles
+# ============================================
+
+# Emails autorisés à devenir administrateurs (séparés par des virgules)
+# Exemple: ADMIN_EMAILS=admin1@example.com,admin2@example.com
+ADMIN_EMAILS=
+
+# Endpoint pour le modèle ML local (Ollama)
+# Par défaut: http://localhost:11434
+# Changez cette valeur si Ollama tourne sur un autre port ou une autre machine
+LOCAL_AI_ENDPOINT=http://localhost:11434
+

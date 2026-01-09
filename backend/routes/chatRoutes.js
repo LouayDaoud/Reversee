@@ -7,7 +7,8 @@ const {
   getUserConversations,
   getConversation,
   getAllConversations,
-  deleteConversation
+  deleteConversation,
+  generateAIResponse
 } = require('../controllers/chatController');
 
 // Create a new conversation
@@ -15,6 +16,9 @@ router.post('/', protect, createConversation);
 
 // Add a message to a conversation
 router.post('/:conversationId/messages', protect, addMessage);
+
+// Generate AI response for a conversation
+router.post('/:conversationId/ai-response', protect, generateAIResponse);
 
 // Get all conversations for the current user
 router.get('/me', protect, getUserConversations);

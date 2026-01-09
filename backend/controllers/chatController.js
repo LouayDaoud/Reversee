@@ -1,5 +1,6 @@
 const ChatConversation = require('../models/ChatConversation');
 const User = require('../models/User');
+const AIService = require('../services/aiService');
 
 // Create a new conversation
 exports.createConversation = async (req, res) => {
@@ -233,6 +234,118 @@ exports.deleteConversation = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Server Error'
+    });
+  }
+};
+
+// Generate AI response for a conversation
+// @desc    Generate AI response
+// @route   POST /api/chat/:conversationId/ai-response
+// @access  Private
+exports.generateAIResponse = async (req, res) => {
+  try {
+    const { conversationId } = req.params;
+    const { message } = req.body;
+    const userId = req.user.id;
+
+    if (!message || !message.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Message is required'
+      });
+    }
+
+    // Find the conversation
+    const conversation = await ChatConversation.findById(conversationId);
+
+    if (!conversation) {
+      return res.status(404).json({
+        success: false,
+        message: 'Conversation not found'
+      });
+    }
+
+    // Check authorization
+    if (conversation.user.toString() !== userId && !req.user.isAdmin) {
+      return res.status(403).json({
+        success: false,
+        message: 'Not authorized to access this conversation'
+      });
+    }
+
+    // Build conversation history
+    const conversationHistory = conversation.messages.map(msg => ({
+      text: msg.text,
+      sender: msg.sender
+    }));
+
+    // Build enriched context with user data
+    const Habit = require('../models/Habit');
+    const User = require('../models/User');
+    
+    const user = await User.findById(userId).select('-password');
+    const recentHabits = await Habit.find({ user: userId })
+      .sort({ date: -1 })
+      .limit(10)
+      .lean();
+
+    const context = {
+      triggerHabit: conversation.triggerHabit ? await Habit.findById(conversation.triggerHabit).lean() : null,
+      user: {
+        firstName: user?.firstName,
+        lastName: user?.lastName,
+        isAdmin: user?.isAdmin
+      },
+      recentHabits: recentHabits
+    };
+
+    // Generate AI response with enriched context (OpenAI uniquement)
+    let aiResponse;
+    try {
+      aiResponse = await AIService.generateResponse(
+        message,
+        userId,
+        conversationHistory,
+        context
+      );
+    } catch (error) {
+      console.error('Error generating AI response:', error);
+      // Retourner une erreur claire
+      return res.status(500).json({
+        success: false,
+        message: error.message || 'Erreur lors de la génération de la réponse IA. Vérifiez que le modèle ML local est correctement configuré.'
+      });
+    }
+
+    // Add user message to conversation
+    conversation.messages.push({
+      text: message,
+      sender: 'user',
+      timestamp: Date.now()
+    });
+
+    // Add AI response to conversation
+    conversation.messages.push({
+      text: aiResponse,
+      sender: 'ai',
+      timestamp: Date.now()
+    });
+
+    // Save conversation
+    await conversation.save();
+
+    res.status(200).json({
+      success: true,
+      data: {
+        response: aiResponse,
+        conversation: conversation
+      }
+    });
+  } catch (error) {
+    console.error('Error generating AI response:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Error generating AI response'
     });
   }
 };

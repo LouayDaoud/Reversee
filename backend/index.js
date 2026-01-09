@@ -18,6 +18,10 @@ const chatRoutes = require('./routes/chatRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const badgeRoutes = require('./routes/badgeRoutes');
 const analysisRoutes = require('./routes/analysisRoutes');
+const aiRoutes = require('./routes/aiRoutes');
+const userScheduledHabitRoutes = require('./routes/userScheduledHabitRoutes');
+const habitDNARoutes = require('./routes/habitDNARoutes');
+const arRoutes = require('./routes/arRoutes');
 
 // Initialize Express app
 const app = express();
@@ -86,6 +90,10 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/badges', badgeRoutes);
 app.use('/api/analysis', analysisRoutes);
+app.use('/api/ai', aiRoutes);
+app.use('/api/scheduled-habits', userScheduledHabitRoutes);
+app.use('/api/habit-dna', habitDNARoutes);
+app.use('/api/ar', arRoutes);
 
 // Centralized error handler
 app.use((err, req, res, next) => {

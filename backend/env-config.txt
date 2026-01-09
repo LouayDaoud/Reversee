@@ -1,0 +1,40 @@
+# ============================================
+# Configuration Reversee Backend - Fichier .env
+# ============================================
+# INSTRUCTIONS:
+# 1. Renommez ce fichier en .env (supprimez -config.txt)
+# 2. Ajoutez votre clé API OpenAI dans OPENAI_API_KEY
+# 3. Générez un JWT_SECRET avec: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+# 4. Sauvegardez le fichier
+# 5. Exécutez: node scripts/setup-openai-model.js
+
+# ============================================
+# REQUIRED - Variables obligatoires
+# ============================================
+
+# Clé API OpenAI (REQUIS pour l'Assistant IA)
+# Obtenez votre clé sur : https://platform.openai.com/api-keys
+# Format: sk-proj-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+OPENAI_API_KEY=
+
+# URI de connexion MongoDB
+# Format: mongodb://[username:password@]host[:port][/database]
+MONGODB_URI=mongodb://localhost:27017/reversee
+
+# Secret JWT pour l'authentification
+# Générez une clé sécurisée avec: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+JWT_SECRET=
+
+# Port du serveur backend
+PORT=5000
+
+# ============================================
+# OPTIONAL - Variables optionnelles
+# ============================================
+
+# Emails autorisés à devenir administrateurs (séparés par des virgules)
+# Exemple: ADMIN_EMAILS=admin1@example.com,admin2@example.com
+ADMIN_EMAILS=
+
+
+

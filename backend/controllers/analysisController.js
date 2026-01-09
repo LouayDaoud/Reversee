@@ -1,6 +1,6 @@
 const HabitAnalysisService = require('../services/habitAnalysisService');
+const AIService = require('../services/aiService');
 const Habit = require('../models/Habit');
-const axios = require('axios');
 
 // @desc    Get habit analysis for user
 // @route   GET /api/analysis/habits
@@ -34,36 +34,26 @@ exports.getAIInsights = async (req, res) => {
     // Générer le prompt pour l'IA
     const prompt = HabitAnalysisService.generateAIPrompt(analysis, userHabits);
     
-    // Appeler l'API OpenAI (ou une alternative)
+    // Utiliser le service IA unifié (OpenAI uniquement)
     let aiResponse = null;
     try {
-      // Vous pouvez remplacer ceci par votre service IA préféré
-      const openaiResponse = await axios.post('https://api.openai.com/v1/chat/completions', {
-        model: 'gpt-3.5-turbo',
-        messages: [
-          {
-            role: 'system',
-            content: 'Vous êtes un coach en développement personnel spécialisé dans les habitudes. Vous donnez des conseils personnalisés, encourageants et pratiques.'
-          },
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        max_tokens: 500,
-        temperature: 0.7
-      }, {
-        headers: {
-          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-          'Content-Type': 'application/json'
+      // Utiliser le service IA unifié - OpenAI uniquement
+      aiResponse = await AIService.generateResponse(
+        prompt,
+        req.user.id,
+        [], // Pas d'historique de conversation
+        {
+          analysis,
+          habits: userHabits
         }
-      });
-      
-      aiResponse = openaiResponse.data.choices[0].message.content;
+      );
     } catch (aiError) {
       console.error('Error calling AI service:', aiError);
-      // Fallback: générer une réponse basée sur les règles
-      aiResponse = generateFallbackInsights(analysis, userHabits);
+      // Pas de fallback - retourner une erreur claire
+      return res.status(500).json({
+        success: false,
+        message: aiError.message || 'Erreur lors de la génération des insights IA. Vérifiez que le modèle ML local est correctement configuré.'
+      });
     }
     
     res.status(200).json({
@@ -132,6 +122,8 @@ exports.getWeeklyReport = async (req, res) => {
 };
 
 // Fonction de fallback pour générer des insights sans IA
+// NOTE: Cette fonction n'est plus utilisée - toutes les réponses passent par OpenAI
+// Conservée uniquement pour référence historique
 function generateFallbackInsights(analysis, userHabits) {
   let insights = `📊 **Analyse de vos habitudes**\n\n`;
   
